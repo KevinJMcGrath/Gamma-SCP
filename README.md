@@ -1,6 +1,7 @@
 # Symphony Self-Service Site
 
 > This repo contains the code necessary to deploy the Symphony Self-Service front-end. 
+> Updated for Gamma - SCP
 
 ## Build Setup
 
