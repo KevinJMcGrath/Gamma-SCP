@@ -110,6 +110,7 @@
     import SymphonyFooter from '~/components/SymphonyFooter.vue'
 
     export default {
+        layout: 'default-phk',
         data() {
             const validateTandC = (rule, value, callback) => {                
                 if (this.$refs['tandc_cb'].checked === true)

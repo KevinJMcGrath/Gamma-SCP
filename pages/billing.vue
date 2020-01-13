@@ -155,7 +155,7 @@
     let cardCVC = undefined
 
     export default {
-        
+        layout: 'default-phk',
         data() {
             const validateReqIfUs = (rule, value, callback) => {
                 if(this.is_country_us && !value.replace(/\s+/,'').length) {

@@ -34,6 +34,7 @@
     import SymphonyFooter from '~/components/SymphonyFooter.vue'
 
     export default {
+        layout: 'default-phk',
         data() {
 
             return {

@@ -53,6 +53,30 @@ function clean_input(input_val) {
 	return santize(input_val, {allowedTags: [], allowedAttributes: []})
 }
 
+router.post('/comm-key-check', function(req, res, next) {
+	let comm_key = req.body.comm_key
+	let ret_obj = { 
+		success: false,
+		sfdc_id: '',
+		name: '' 
+	}
+
+	/* TODO:
+	*	decrypt key
+	*	match to SFDC ID of sponsor 
+	*	check for used code
+	*	check timestamp validity
+	*/
+	if (comm_key === '123456789') {
+		ret_obj.success = true,
+		ret_obj.sfdc_id = '001o000000Xtm9b',
+		ret_obj.name = 'Piper Sandler & Co.'
+	}
+
+	res.json(ret_obj)
+	
+})
+
 router.post('/private-check', function(req, res, next) {
 	let key = req.body.phk
 
@@ -238,5 +262,133 @@ router.post('/purchase-submit', function(req, res, next) {
 		res.status(err_obj.status).json( { success: false, message: err_obj.message, code: err_code})
 	})
 })
+
+router.post('/scp-sponsored-submit', function(req, res, next){
+	const payload = {
+		sponsor_key: req.body.global.community_sponsor_key,
+		firstname: req.body.user.firstname,
+		lastname: req.body.user.lastname,
+		email: req.body.email.email_address,
+		companyname: req.body.company.name
+	}
+
+	sfdc_api_callout('/scp-sponsored-submit', payload, res)
+
+	/*
+	const config = {
+		baseURL: process.env.SFDC_BASE_URL,
+		headers: {
+			'X-SYM-APIKEY': process.env.SFDC_GAMMA_KEY
+		}
+	}
+
+	axios.post('/scp-sponsored-submit', payload, config)
+	.then((response) => {
+		log_response(response)
+
+		res.json({
+			success: true,
+			message: response.data.message,
+			code: response.data.code
+		})
+	})
+	.catch((error) => {
+		let err_obj = axios_error(error)
+
+		let err_code = -99
+
+		if (error.response && error.response.code) {
+			err_code = error.response.code
+		}
+
+		res.status(err_obj.status).json({ 
+			success: false, 
+			message: err_obj.message, 
+			code: err_code
+		})
+	})
+	*/
+})
+
+router.post('/scp-sponsered-email-verify', function(req, res, next){
+	const payload = {
+		contact_id: req.body.contact_id
+	}
+
+	sfdc_api_callout('/scp-sponsored-email-verification', payload, res)
+
+	/*
+	const config = {
+		baseURL: process.env.SFDC_BASE_URL,
+		headers: {
+			'X-SYM-APIKEY': process.env.SFDC_GAMMA_KEY
+		}
+	}
+
+	axios.post('/scp-sponsored-email-verification', payload, config)
+	.then((response) => {
+		log_response(response)
+
+		res.json({
+			success: true,
+			message: response.data.message,
+			code: response.data.code
+		})
+	})
+	.catch((error) => {
+		let err_obj = axios_error(error)
+
+		let err_code = -99
+
+		if (error.response && error.response.code) {
+			err_code = error.response.code
+		}
+
+		res.status(err_obj.status).json({ 
+			success: false, 
+			message: err_obj.message, 
+			code: err_code
+		})
+	})
+
+	*/
+})
+
+function sfdc_api_callout(endpoint, payload, router_response)
+{
+
+	const config = {
+		baseURL: process.env.SFDC_BASE_URL,
+		headers: {
+			'X-SYM-APIKEY': process.env.SFDC_GAMMA_KEY
+		}
+	}
+
+	axios.post(endpoint, payload, config)
+	.then((response) => {
+		log_response(response)
+
+		router_response.json({
+			success: true,
+			message: response.data.message,
+			code: response.data.code
+		})
+	})
+	.catch((error) => {
+		let err_obj = axios_error(error)
+
+		let err_code = -99
+
+		if (error.response && error.response.code) {
+			err_code = error.response.code
+		}
+
+		router_response.status(err_obj.status).json({ 
+			success: false, 
+			message: err_obj.message, 
+			code: err_code
+		})
+	})
+}
 
 module.exports = router

@@ -69,6 +69,7 @@
     const htmlRe = new RegExp(String.raw`</?\w+((\s+\w+(\s*=\s*(?:".*?"|'.*?'|[\^'">\s]+))?)+\s*|\s*)/?>`)
 
     export default {
+        layout: 'default-phk',
         data() {
             const validateCustomPhone = (rule, value, callback) => {
                 //console.log('Phone input state: ' + this.$refs['vuetel'].state)

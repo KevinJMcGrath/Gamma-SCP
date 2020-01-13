@@ -100,6 +100,7 @@
     const htmlRe = new RegExp(String.raw`</?\w+((\s+\w+(\s*=\s*(?:".*?"|'.*?'|[\^'">\s]+))?)+\s*|\s*)/?>`)
 
     export default {
+        layout: 'default-phk',
         data() {
             const validateMinSeats = (rule, value, callback) => {
                 if (this.input_seats < 0) {

@@ -14,7 +14,8 @@ Vue.use(Vuex)
 // to return the initial state so I can use it to reset the state later. 
 const initial_state = () => ({
 	global: {
-		phk: ''
+		phk: '',
+		community_sponsor_key: '',
 	},
     status: {
         guid: '',
@@ -36,7 +37,8 @@ const initial_state = () => ({
     },
     company: {
         name: '',
-        industry: ''
+		industry: '',
+		url: ''
     },
     service: {
         seats: 50,
@@ -61,7 +63,15 @@ const initial_state = () => ({
         onetime_fees: 500,
         pupm: 20,
         minimum_seats: 100		
-    },
+	},
+	community_sponsor_info: {
+		sponsor_sfdc_id: '',
+		sponser_name: '',
+		email: '',
+		first_name: '',
+		last_name: '',
+		company_name: ''		
+	},
     error: {
         is_error_status: false,        
         message: ''
@@ -103,6 +113,9 @@ const store = () => new Vuex.Store({
 		SET_PHK(state, phk) {
 			state.global.phk = phk
 		},
+		SET_COMMUNITY_KEY(state, community_sponsor_key) {
+			state.global.community_sponsor_key = community_sponsor_key
+		},
 		SET_FNAME(state, firstname) {
 			state.user.firstname = firstname.trim().replace( /\s\s+/g, ' ')
 		},
@@ -123,6 +136,9 @@ const store = () => new Vuex.Store({
 		},
 		SET_INDUSTRY(state, industry) {
 			state.company.industry = industry
+		},
+		SET_URL(state, company_url){
+			state.company.url = company_url
 		},
 		SET_SEATS(state, seats) {
 			state.service.seats = seats
@@ -157,6 +173,10 @@ const store = () => new Vuex.Store({
 		},
 		SET_BILLING_COUNTRY(state, country) {
 			state.billing.country = country
+		},
+		SET_SPONSOR_INFO(state, sponsor_obj) {
+			state.community_sponsor_info.sponsor_sfdc_id = sponsor_obj.sfdc_id || ''
+			state.community_sponsor_info.sponser_name = sponsor_obj.name || 'Unknown'
 		},
 		SET_STRIPE_TOKEN(state, tokenObj) {
 			state.billing.stripe_token = tokenObj
@@ -315,6 +335,58 @@ const store = () => new Vuex.Store({
             return
 					
 		},
+		async domain_check({commit, getters, state}) {
+			let email = state.email.email_address
+
+			let resp = await axios.post(getters.baseAppURL + '/api/domain-check', { email_address: email })
+
+			if (response.success)
+			{
+				let domain = response.data.domain_name
+				let msg = 'Business domain email addresses only.'
+								
+			}
+		},
+		async verifyCommunityKey({commit, getters}, community_sponsor_key) {
+			let retVal = false
+
+			try {
+				console.log('Verifying Community Sponsor Key...')
+				console.log('API Base URL: ' + getters.baseAppURL )
+				let resp = await axios.post(getters.baseAppURL + '/api/comm-key-check', { comm_key: community_sponsor_key })
+
+				if (resp.data.success) {
+					commit('SET_COMMUNITY_KEY', community_sponsor_key)
+					commit('SET_SPONSOR_INFO', resp.data)
+					retVal = true
+				}
+			}
+			catch (error) {
+                if (error.response) {                    
+                    console.error('Axios error verifying Sponsor Key: ' + error.response.statusText)                    
+
+                    let err_msg = 'Unable to verify.'
+                    commit('SET_ERROR_STATUS', true)
+                    commit('SET_ERROR_MESSAGE', err_msg)
+
+                    retVal.success = false
+                    retVal.message = err_msg
+                    retVal.code = error.response.data.vcode
+                }
+                else {
+                    console.error('Error without response: ' + error.message)
+                    commit('SET_ERROR_STATUS', true)
+                    commit('SET_ERROR_MESSAGE', error.message || 'Unknown error message')
+
+                    retVal.success = false
+                    retVal.message = error.message || 'Unknown error message'
+                    retVal.code = -7
+                }
+			}
+			finally {
+				return retVal
+			}
+		},
 		async verifyPHK({commit, getters}, phk) {
 			let retVal = false
 
@@ -410,7 +482,53 @@ const store = () => new Vuex.Store({
                 return retVal
             }
             
-        },
+		},
+		async submitSCPSponsored({commit, dispatch, state})
+		{
+			if (state.status.submit_in_progress) { return -1}
+
+			if (state.status.submit_completed) { return -2 }
+			
+			commit('SET_IN_PROGRESS', true)
+
+			try {
+                let resp = await axios.post('/api/scp-sponsored-submit', state)
+
+                if (resp && resp.status){ 
+                    if (Math.floor(resp.status / 100) == 2) { 
+                        commit('SET_IN_PROGRESS', false)
+                        commit('SET_PAGE_COMPLETE', 'summary')
+                        commit('SET_SUBMIT_COMPLETE', true)
+                        commit('SET_SUBMIT_COMPLETE_DATE', moment())
+
+                        return 0
+                    }
+                    else {
+                        commit('SET_IN_PROGRESS', false)
+                        
+                        return resp.data.code
+                    }
+                }
+                else {
+                    return -101
+                }
+            }
+            catch (error)
+            {
+                commit('SET_IN_PROGRESS', false)
+
+                err_msg = {
+                    message: 'There was a problem submitting your request.',
+                    code: 'SUM-01'
+                }
+
+                dispatch('sendErrorReport', error)
+                dispatch('setErrorState', err_msg)
+
+                if (error.response)
+                    return error.response.code || -99
+            }
+		},
 		async submitPurchase({ commit, dispatch, state })
 		{
             if (state.status.submit_in_progress) { return -1}

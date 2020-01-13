@@ -11,6 +11,7 @@
   
 
   export default {
+    middleware: 'comm_key',
     components: {
       SymphonyHeader
     }

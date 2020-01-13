@@ -102,6 +102,12 @@ body {
     cursor: pointer;
 }
 
+.button-style-start {
+    height: 40px; 
+    width: 190px;
+    font-size: 1.3em;        
+}
+
 .button_disabled {
     background-color: rgba(3, 149, 161, 0.3);
 }

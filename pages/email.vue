@@ -37,6 +37,7 @@
     import SymphonyFooter from '~/components/SymphonyFooter.vue'
 
     export default {
+        layout: 'default-phk',
         data() {
             const validateFreemail = (rule, value, callback) => {
                 if (value !== '' && value !== 'kevinmcgr@gmail.com')
