@@ -22,7 +22,7 @@
     "axios": "^0.21.2",
     "body-parser": "^1.18.3",
     "cookie": "^0.3.1",
-    "css-loader": "^0.23.1",
+    "css-loader": "^6.7.2",
     "dotenv": "^6.1.0",
     "express": "^4.16.3",
     "flag-icon-css": "^3.2.1",
@@ -30,9 +30,9 @@
     "iview-loader": "^1.2.2",
     "js-cookie": "^2.2.0",
     "less": "^3.0.2",
-    "less-loader": "^2.2.3",
+    "less-loader": "^11.1.0",
     "moment": "^2.29.2",
-    "nuxt": "^1.4.2",
+    "nuxt": "^3.0.0",
     "postcss-loader": "^2.1.6",
     "sanitize-html": "^2.3.2",
     "vue": "^2.5.17",
@@ -43,14 +43,14 @@
   "devDependencies": {
     "babel-eslint": "^8.2.6",
     "cross-env": "^5.2.0",
-    "css-loader": "^0.23.1",
+    "css-loader": "^6.7.2",
     "eslint": "^4.19.1",
     "eslint-friendly-formatter": "^3.0.0",
     "eslint-loader": "^1.7.1",
     "eslint-plugin-vue": "^4.7.1",
     "iview-loader": "^1.2.2",
     "less": "^2.7.3",
-    "less-loader": "^2.2.3",
+    "less-loader": "^11.1.0",
     "postcss-loader": "^2.1.6"
   }
 }
