@@ -24,7 +24,7 @@
     "cookie": "^0.3.1",
     "css-loader": "^0.23.1",
     "dotenv": "^6.1.0",
-    "express": "^4.16.3",
+    "express": "^4.17.3",
     "flag-icon-css": "^3.2.1",
     "iview": "^3.1.1",
     "iview-loader": "^1.2.2",
